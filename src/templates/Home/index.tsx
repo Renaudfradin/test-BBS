@@ -15,8 +15,15 @@ export type Planetes = {
   name: string
 }
 
+export type Planete = {
+  id: string
+  name: string
+}
+
 const HomeTemplate: FC<HomeTemplateProps> = () => {
   const [datas, updatedata] = useState<Planetes[]>([]);
+  const [filter, updatefilter] = useState<Planete[]>([]);
+  const [inputvalue, updateinputvalue] = useState('');
 
   useEffect(() => {
     axios.get('https://api.le-systeme-solaire.net/rest.php/bodies')
@@ -29,15 +36,50 @@ const HomeTemplate: FC<HomeTemplateProps> = () => {
       })
   }, [])
 
+  function handleChange(e: any) {
+    updateinputvalue(e.target.value);
+  }
+
+  function handleOnSubmitSearch(e: React.SyntheticEvent<HTMLFormElement>) {
+    e.preventDefault();
+    console.log(inputvalue);
+
+    axios.get(`https://api.le-systeme-solaire.net/rest.php/bodies/${inputvalue}`)
+      .then((data) => {
+        console.log(data.data);
+        updatefilter(data.data);
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  }
+
   return (
     <div className="containerPlanete">
-      {datas.map((data)=>(
+      <form className="search" onSubmit={handleOnSubmitSearch}>
+          <input
+            name="query"
+            type="search"
+            value={inputvalue}
+            onChange={handleChange}
+          />
+          <button>Search</button>
+      </form>
+      {inputvalue.length == 0 ? (
+      datas.map((data) => (
         <div key={data.id} className="">
           <p>{data.id}</p>
           <p>{data.name}</p>
           <Link to={`/planete/${data.id}`}>{data.name}</Link>
         </div>
-      ))}
+      ))
+       ):(
+        <div className="">
+          <p>test</p>
+          <p>{filter.id}</p>
+          {/* <Link to={`/planete/${filter}`}>{filter}</Link> */}
+        </div>
+      )}
     </div>
   )
 }
