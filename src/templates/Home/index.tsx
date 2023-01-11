@@ -76,7 +76,7 @@ const HomeTemplate: FC<HomeTemplateProps> = () => {
        ):(
         <div className="">
           <p>test</p>
-          <p>{filter.id}</p>
+          
           {/* <Link to={`/planete/${filter}`}>{filter}</Link> */}
         </div>
       )}
